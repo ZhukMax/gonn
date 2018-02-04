@@ -2,7 +2,6 @@ package gonn
 
 import (
 	"math"
-	"gonn/synapse"
 )
 
 /**
@@ -24,16 +23,7 @@ func Sigmoid(x float64) float64 {
 Delta for hidden layer's nodes
 @public
  */
-func Delta(node int, out float64, synapses []synapse.Synapse, deltas []float64) float64 {
-	if len(synapses) != len(deltas) {
-		panic("Delta func need equally synapses and deltas")
-	}
-
-	var amount float64
-	for i, delta := range deltas {
-		amount += delta * synapse.SearchSynapse(node, i, synapses)
-	}
-
+func Delta(out, amount float64) float64 {
 	return f(out) * amount
 }
 
