@@ -2,6 +2,7 @@ package net
 
 import (
 	"gonn/synapse"
+	"fmt"
 )
 
 /**
@@ -57,6 +58,7 @@ func (n Network) checkInputData(input []float64) bool {
 
 func (n Network) GetResult(input []float64) []float64 {
 	var outputs = n.conclude(input)
+	fmt.Print(outputs)
 	var layers = len(outputs)
 
 	return outputs[layers - 1]
