@@ -2,7 +2,6 @@ package net
 
 import (
 	"gonn/synapse"
-	"fmt"
 )
 
 /**
@@ -20,21 +19,17 @@ func (n Network) conclude(input []float64) [][]float64 {
 
 	// Conclude output data
 	for i, layer := range n.Structure {
-		// For the input layer
 		if i == 0 {
+			// For the input layer
 			output = append(output, input)
-			//continue
-		} else if i == len(n.Structure) - 1 {
-			// If output layer
-			break
-		}
+		} else {
+			var tmp []float64
+			for node := 0; node < layer.Nodes; node++ {
+				tmp = append(tmp, synapse.Activation(output[i - 1], node, n.Structure[i-1].Synapses))
+			}
 
-		var tmp []float64
-		for node := 0; node < layer.Nodes; node++ {
-			tmp = append(tmp, synapse.Activation(output[i], node, layer.Synapses))
+			output = append(output, tmp)
 		}
-
-		output = append(output, tmp)
 	}
 
 	return output
@@ -58,9 +53,8 @@ func (n Network) checkInputData(input []float64) bool {
 }
 
 func (n Network) GetResult(input []float64) []float64 {
-	var outputs = n.conclude(input)
-	fmt.Print(outputs)
-	var layers = len(outputs)
+	var output = n.conclude(input)
+	var layers = len(output)
 
-	return outputs[layers - 1]
+	return output[layers - 1]
 }
