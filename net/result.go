@@ -23,6 +23,7 @@ func (n Network) conclude(input []float64) [][]float64 {
 		// For the input layer
 		if i == 0 {
 			output = append(output, input)
+			//continue
 		} else if i == len(n.Structure) - 1 {
 			// If output layer
 			break
