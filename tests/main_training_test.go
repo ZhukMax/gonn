@@ -16,7 +16,7 @@ func TestTraining(t *testing.T)  {
 	// First train for create Error
 	main_interface.Training(n, input, ideal, 1)
 
-	for i := 0; i < 15; i++ {
+	for i := 0; i < 10; i++ {
 		// Re-read Net from file
 		n := main_interface.ReadNetwork(a.Title)
 		tmpError := n.Error
@@ -28,7 +28,7 @@ func TestTraining(t *testing.T)  {
 		tmpNet := main_interface.ReadNetwork(a.Title)
 
 		if tmpError <= tmpNet.Error {
-			t.Error("Error of net must to decrease. Last error:", tmpError, ", New error:", tmpNet.Error)
+			t.Error("Error of net must to decrease. Last error:", tmpError, "New error:", tmpNet.Error)
 		}
 	}
 
