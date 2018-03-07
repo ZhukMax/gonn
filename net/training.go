@@ -1,27 +1,33 @@
 package net
 
 import (
-	"math"
 	"gonn"
 	"gonn/synapse"
+	"os"
+	"log"
+	"strconv"
 )
 
 /**
 @public
  */
 func (n *Network) Training(input, ideal [][]float64)  {
+	// Training
 	for i, data := range input {
 		n.trainingIteration(data, ideal[i])
 	}
 
-	n.Epoch++
-	n.Iteration = 1
+	n.setEpoch()
+	n.Save()
+
+	// Logging
+	n.log()
 }
 
 /**
 @private
  */
-func (n *Network) trainingIteration(input, ideal []float64) {
+func (n *Network) trainingIteration(input, ideal []float64)  {
 	var result = n.conclude(input)
 	var deltas = n.getDeltas(result, ideal)
 
@@ -41,30 +47,9 @@ func (n *Network) trainingIteration(input, ideal []float64) {
 
 	// Set new error of network
 	n.setError(n.GetResult(input), ideal)
-}
 
-/**
-Change Iteration of net
-@private
- */
-func (n *Network) setIteration() {
-	n.Iteration++
-}
-
-func (n *Network) setError(results, purposes []float64) {
-	var localError = n.Error * float64(n.Iteration)
-
-	if len(results) != len(purposes) {
-		panic("Wrong count of results and purposes for set a new NetError")
-	}
-	for i, result := range results {
-		localError += math.Pow(purposes[i] - result, 2)
-	}
-
+	// Set new iteration
 	n.setIteration()
-
-	// Change Error of net
-	n.Error = localError / float64(n.Iteration)
 }
 
 /**
@@ -99,4 +84,38 @@ func (n Network) getDeltas(result [][]float64, ideal []float64) [][]float64 {
 	}
 
 	return deltas
+}
+
+/**
+Set new Epoch of net
+@private
+ */
+func (n *Network) setEpoch() {
+	n.Epoch++
+	n.Iteration = 1
+}
+
+/**
+Set new Iteration of net
+@private
+ */
+func (n *Network) setIteration() {
+	n.Iteration++
+}
+
+/**
+Logging
+@private
+ */
+func (n *Network) log()  {
+	f, err := os.OpenFile(
+		gonn.DataPath + "/" + n.File + ".log",
+		os.O_RDWR | os.O_CREATE | os.O_APPEND,
+		0666)
+	gonn.Check(err)
+	defer f.Close()
+
+	log.SetOutput(f)
+	log.Println(" | Epoch: " + strconv.Itoa(n.Epoch) + " || Error: " +
+		gonn.FloatToString(n.Error * 100) + "%")
 }
