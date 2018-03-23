@@ -71,6 +71,7 @@ func (n Network) getDeltas(result [][]float64, ideal []float64) [][]float64 {
 			if k == outLayerNum {
 				// For output layer
 				localDeltas = append(localDeltas, gonn.DeltaOut(result[k][i], ideal[i]))
+				fmt.Println(result[k], " || ", ideal[i])
 			} else {
 				// For hidden layers
 				var amount float64
