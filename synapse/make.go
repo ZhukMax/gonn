@@ -10,7 +10,7 @@ Create new Synapse
 @public
  */
 func MakeSynapse(indexIn, indexOut int) Synapse {
-	source := rand.NewSource(time.Now().UnixNano())
+	source := rand.NewSource(time.Now().UTC().UnixNano())
 	r := rand.New(source)
 
 	var synapse = Synapse{}
