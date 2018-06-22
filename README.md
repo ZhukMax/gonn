@@ -12,6 +12,14 @@ import (
 
 func main() {
     fmt.Print("Start")
-    api_interface.Server()
+    config := gonn.GetConfig("config.json")
+    api_interface.Server(config)
+}
+```
+config.json
+```json
+{
+  "Port": "8080",
+  "DataPath": "/home/user/gonn/data"
 }
 ```
