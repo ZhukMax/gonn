@@ -6,6 +6,7 @@ import (
 	"os"
 	"log"
 	"strconv"
+	"fmt"
 )
 
 /**
@@ -21,7 +22,7 @@ func (n *Network) Training(input, ideal [][]float64)  {
 	n.Save()
 
 	// Logging
-	n.log()
+	n.logger()
 }
 
 /**
@@ -33,7 +34,7 @@ func (n *Network) trainingIteration(input, ideal []float64)  {
 
 	// Loop of Layers
 	for i, l := range n.Structure {
-		for _, s := range l.Synapses {
+		for i2, s := range l.Synapses {
 			// Gradient of synapse
 			var gradient = deltas[i + 1][s.IndexOut] * result[i][s.IndexIn]
 
@@ -42,6 +43,7 @@ func (n *Network) trainingIteration(input, ideal []float64)  {
 
 			// Change synapse's weight
 			s.Weight = s.Weight + s.Diff
+			n.Structure[i].Synapses[i2] = s
 		}
 	}
 
@@ -71,7 +73,7 @@ func (n Network) getDeltas(result [][]float64, ideal []float64) [][]float64 {
 			if k == outLayerNum {
 				// For output layer
 				localDeltas = append(localDeltas, gonn.DeltaOut(result[k][i], ideal[i]))
-				fmt.Println(result[k], " || ", ideal[i])
+				fmt.Println(result[k], " || ideal:", ideal[i], " || epoch:", n.Epoch)
 			} else {
 				// For hidden layers
 				var amount float64
@@ -108,7 +110,7 @@ func (n *Network) setIteration() {
 Logging
 @private
  */
-func (n *Network) log()  {
+func (n *Network) logger()  {
 	f, err := os.OpenFile(
 		gonn.DataPath + "/" + n.File + ".log",
 		os.O_RDWR | os.O_CREATE | os.O_APPEND,
